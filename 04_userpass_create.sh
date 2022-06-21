@@ -2,19 +2,20 @@
 set -o xtrace
 export VAULT_ADDR=http://localhost:8200
 export VAULT_TOKEN=root
-export VAULT_NAMESPACE=
+
 
 #enable userpass to create an authentication method for creating and login
 vault auth enable userpass
 
-vault write auth/userpass/users/amar \
-    password=secret
+vault write auth/userpass/users/susan \
+    password="geheim"
 
-vault write auth/userpass/users/mark \
-    password=secret
+vault write auth/userpass/users/bob \
+    password="geheim"
+
+
  
-vault write auth/userpass/users/farid \
-    password=secret
+
 
 
 #List Users with entity

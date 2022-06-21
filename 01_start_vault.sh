@@ -2,7 +2,7 @@
 set -o xtrace
 
 #set VAULT_LICENSE
-export VAULT_LICENSE=`cat license.hclic`
+export VAULT_LICENSE=`cat ../../vault.hclic`
 
 #stop and remove vault containers if already running
 docker stop vault-demo-vault

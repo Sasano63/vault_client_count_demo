@@ -1,6 +1,7 @@
 #!/bin/sh
 set -o xtrace
-
+export VAULT_ADDR=http://localhost:8200
+export VAULT_TOKEN=root
 #create namespace development
 vault namespace create development
 
@@ -12,26 +13,27 @@ vault policy write -namespace=development development dev-admin.hcl
 vault auth enable -namespace=development userpass
 
 vault write -namespace=development \
-        auth/userpass/users/bob password=secret
+        auth/userpass/users/alices password=geheim
 
 
-#Create an entity for Bob Smith with development policy attached. Save the generated entity ID in a file named entity_id.txt.
-vault write -namespace=development -format=json identity/entity name="Bob Smith" \
-        policies="development" | jq -r ".data.id" > entity_id.txt
 
-#Get the mount accessor for userpass auth method and save it in accessor.txt.
+# Create an entity for Alice with development policy attached. Save the generated entity ID in a file named entity_id.txt.
+vault write -namespace=development -format=json identity/entity name="Alice Schmidt" \
+        policies="developer" | jq -r ".data.id" > entity_id.txt
+
+# Get the mount accessor for userpass auth method and save it in accessor_development.txt
 vault auth list -namespace=development -format=json \
-        | jq -r '.["userpass/"].accessor' > accessor.txt
+        | jq -r '.["userpass/"].accessor' > accessor_development.txt
 
-#Create an entity alias for Bob Smith to attach bob
-vault write -namespace=development identity/entity-alias name="bob" \
-        canonical_id=$(cat entity_id.txt) mount_accessor=$(cat accessor.txt)
+# Create an entity alias for Alice to attach alices
+vault write -namespace=development identity/entity-alias name="alices" \
+        canonical_id=$(cat entity_id.txt) mount_accessor=$(cat accessor_development.txt)
 
 
-#Test BoB Smith Entity 
-vault login -namespace=development -method=userpass \
-        username="bob" password="secret"
+#Test Alice Schmidt Entity 
+# vault login -namespace=development -method=userpass \
+#         username="alices" password="geheim"
 
-echo "Log in in UI and test if Bob can create namespace or enable Secret Engines"
+# echo "Log in in UI and test if Alice can create namespace or enable Secret Engines"
 
-#Add some more aliases for Entity Bob
+#Add some more aliases for Entity Alice
